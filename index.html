@@ -17,11 +17,8 @@ body {
   flex-direction: column;
   color: #e6dcff;
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  background:
-    radial-gradient(circle at 84% 6%, rgba(168,85,247,0.18), transparent 46%),
-    radial-gradient(circle at 10% 94%, rgba(236,72,153,0.13), transparent 44%),
-    linear-gradient(160deg, #0c0618 0%, #170c2c 48%, #08040f 100%);
-  background-attachment: fixed;
+background: transparent;
+
 }
 
 /* faint static dot grid */
@@ -403,6 +400,40 @@ if (!isPS4) {
    ========================================================= */
 (function () {
   "use strict";
+  // Matrix Rain Background
+(function () {
+  var c = document.createElement("canvas");
+  c.id = "matrix-rain";
+  c.style.cssText =
+    "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.25";
+  document.body.appendChild(c);
+
+  var x = c.getContext("2d");
+  var chars = "0123456789ABCDEF";
+  var drops = [];
+
+  function resize() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    drops = Array(Math.ceil(c.width / 16)).fill(1);
+  }
+
+  function draw() {
+    x.fillStyle = "rgba(20,0,30,.12)";
+    x.fillRect(0, 0, c.width, c.height);
+    x.font = "14px monospace";
+
+    drops.forEach(function (y, i) {
+      x.fillStyle = Math.random() > .85 ? "#ff3030" : "#00ff66";
+      x.fillText(chars[Math.random() * chars.length | 0], i * 16, y * 16);
+      drops[i] = y * 16 > c.height && Math.random() > .97 ? 0 : y + 1;
+    });
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+  setInterval(draw, 70);
+})();
   var RING_C = 2 * Math.PI * 92;
 
   var ringFg    = document.getElementById("ringFg");
@@ -498,6 +529,60 @@ if (!isPS4) {
         "<br>Restart the console, then press \u201cReset &amp; Refresh\u201d.";
     }
   }, 5000);
+})();
+</script>
+<style>
+body {
+  background: #080d18 !important;
+}
+#matrix-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .65;
+}
+body > *:not(#matrix-bg) {
+  position: relative;
+  z-index: 1;
+}
+</style>
 
+<canvas id="matrix-bg"></canvas>
+<script>
+(() => {
+  const c = document.getElementById("matrix-bg");
+  const x = c.getContext("2d");
+  const chars = "0123456789ABCDEF";
+  let drops = [];
+
+  function resize() {
+    c.width = innerWidth;
+    c.height = innerHeight;
+    drops = Array(Math.ceil(c.width / 18)).fill(1);
+  }
+
+  function draw() {
+    x.fillStyle = "rgba(8,13,24,.12)";
+    x.fillRect(0, 0, c.width, c.height);
+    x.font = "16px monospace";
+
+    drops.forEach((y, i) => {
+      x.fillStyle = Math.random() > .8 ? "#ff3030" : "#00ff55";
+      x.fillText(chars[Math.floor(Math.random()*chars.length)], i*18, y*18);
+      if (y*18 > c.height && Math.random() > .975) drops[i] = 0;
+      drops[i]++;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  addEventListener("resize", resize);
+  resize();
+  draw();
+})();
+</script>
 </body>
 </html>
